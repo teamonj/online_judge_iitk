@@ -138,6 +138,10 @@ int main(int argc, char ** argv)
 
 		// Reset back old stdout
 		dup2(oldstdout,1);
+		FILE * fpe;
+		fpe = fopen ("/var/chroot/usage.txt","a");
+		fprintf(fpe,"%f\n",mtime);
+		fclose(fpe);
 		printf("mtime : %f\n", mtime);
 	}
 	return 0;

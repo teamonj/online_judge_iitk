@@ -138,14 +138,14 @@ while ($j<10)
 
 			//redirect differences in output generated and ideal output to file 'check'
 			//system ("diff /var/chroot/out.txt /opt/lampp/htdocs/onj/problems/".$prob_id."/".$in.".out >/var/chroot/check");
-			system ("diff /var/chroot/out.txt /opt/lampp/htdocs/online_judge_iitk/onj/backend/problems/".$prob_id."/".$in.".out >/var/chroot/check");
+			system ("diff -B /var/chroot/out.txt /opt/lampp/htdocs/online_judge_iitk/onj/backend/problems/".$prob_id."/".$in.".out >/var/chroot/check");
 			
 			//Correct answer: Size of check = 0
 			if (filesize("/var/chroot/check")==0)
 			{
 				echo "<br>correct!<br>";
-				$sql = "UPDATE files_submitted SET status='111' WHERE id='$id'";
-				mysql_query($sql);
+				// $sql = "UPDATE files_submitted SET `status`='111', `runtime`='$mttime'  WHERE `id`='$id'";
+				// mysql_query($sql);
 				$ans = true;
 			}
 			else if (readfile("/var/chroot/tle_check")==5)
@@ -171,6 +171,26 @@ while ($j<10)
 				$ans = false;
 			}
 			$in++;
+		}
+
+		if($ans==true)
+		{
+			$file = fopen("/var/chroot/usage.txt","r");
+			$mtime = fread($file, filesize("/var/chroot/usage.txt"));
+			$mttime = substr($mtime, -9, 8);
+			echo "<h1>".$mttime."</h1>";
+			// $sql = "UPDATE files_submitted SET status='111' WHERE id='$id'";
+			$sql = "UPDATE files_submitted SET `status`='111', `runtime`='$mttime'  WHERE `id`='$id'";
+			mysql_query($sql);
+			
+			$url = "http://localhost/online_judge_iitk/onj/leaderboard/update_ranking/".$id ;
+			$curl = curl_init();
+			curl_setopt($curl, CURLOPT_URL, $url);
+			curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+			curl_setopt($curl, CURLOPT_HEADER, false);
+			$data = curl_exec($curl);
+			echo $data; 
+			curl_close($curl);
 		}
 	}
 }
