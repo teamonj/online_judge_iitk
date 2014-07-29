@@ -3,7 +3,7 @@
                  <p>
 
                  <?php
-                             echo nl2br( htmlspecialchars( $problem_details[0]->problem_statement) );
+                             echo nl2br( ( $problem_details[0]->problem_statement) );
                  ?>
                   
 

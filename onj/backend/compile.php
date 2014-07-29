@@ -68,30 +68,22 @@ while ($j<10)
 		$uid = posix_getpwuid(posix_geteuid());
 		echo "<br> uid = ".$uid['name']."<br>";
 
+		if ($extension == "java")
+		{
+			system("sudo cp /opt/lampp/htdocs/online_judge_iitk/onj/backend/submissions/".$name.".java /var/chroot/Main.java");
+			system("sudo chmod 777 /var/chroot/Main.java");
 
-		//Random file name generation
-		if ($extension != "java")
-		{	
-			$chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
-			$length = 8;
-			$filename = '';
-			for($i = 0; $i < $length; $i++)
-			{
-				$filename .= $chars[mt_rand(0, 35)];
-			}
-		}
-		else $filename = "main"; 	//for java
+			//Compiling the file
+			echo "<br>Compiling...<br>";
+			system("sudo javac /var/chroot/Main.java");
+			system("sudo chmod 777 /var/chroot/Main.class");
 
-		//Compiling the file
-		//echo "<br>/opt/lampp/htdocs/onj/upload/compiler ".$filename." /opt/lampp/htdocs/onj/users/".$user."/".$name.".".$extension." ".$extension."<br>";
-		echo "<br>Compiling...<br>";
-		//system("sudo /opt/lampp/htdocs/onj/upload/compiler ".$filename." /opt/lampp/htdocs/onj/users/".$user."/".$name.".".$extension." ".$extension);
-		echo "sudo /opt/lampp/htdocs/online_judge_iitk/onj/backend/upload/compiler ".$filename." /opt/lampp/htdocs/online_judge_iitk/onj/backend/submissions/".$name.".".$extension." ".$extension;
-		system("sudo /opt/lampp/htdocs/online_judge_iitk/onj/backend/upload/compiler ".$filename." /opt/lampp/htdocs/online_judge_iitk/onj/backend/submissions/".$name.".".$extension." ".$extension);
+			//echo "<br>/opt/lampp/htdocs/onj/upload/compiler ".$filename." /opt/lampp/htdocs/onj/users/".$user."/".$name.".".$extension." ".$extension."<br>";			
+			//system("sudo /opt/lampp/htdocs/onj/upload/compiler ".$filename." /opt/lampp/htdocs/onj/users/".$user."/".$name.".".$extension." ".$extension);
+			// echo "sudo /opt/lampp/htdocs/online_judge_iitk/onj/backend/upload/compiler /opt/lampp/htdocs/online_judge_iitk/onj/backend/submissions/".$name.".".$extension." ".$extension;
+			// system("sudo /opt/lampp/htdocs/online_judge_iitk/onj/backend/upload/compiler ".$filename." /opt/lampp/htdocs/online_judge_iitk/onj/backend/submissions/".$name.".".$extension." ".$extension);
 
-
-		//Check if executable is formed.
-		if (!file_exists("/var/chroot/".$filename))
+			if (!file_exists("/var/chroot/Main.class"))
 			{
 				echo "compilation error";
 				//updating to database that submission has compilation error
@@ -100,13 +92,46 @@ while ($j<10)
 				continue;
 			}
 
-			//updating to database that program is succesfully compiled and is currently running
-			$sql = "UPDATE `files_submitted` SET `status`='1110' WHERE `id`='$id'";
-			mysql_query($sql);
+			$filename = "Main.class";
+		}
+
+		else
+		{
+			//Random file name generation
+			$chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+			$length = 8;
+			$filename = '';
+			for($i = 0; $i < $length; $i++)
+			{
+				$filename .= $chars[mt_rand(0, 35)];
+			}
+		
+			//Compiling the file
+			//echo "<br>/opt/lampp/htdocs/onj/upload/compiler ".$filename." /opt/lampp/htdocs/onj/users/".$user."/".$name.".".$extension." ".$extension."<br>";
+			echo "<br>Compiling...<br>";
+			//system("sudo /opt/lampp/htdocs/onj/upload/compiler ".$filename." /opt/lampp/htdocs/onj/users/".$user."/".$name.".".$extension." ".$extension);
+			echo "sudo /opt/lampp/htdocs/online_judge_iitk/onj/backend/upload/compiler ".$filename." /opt/lampp/htdocs/online_judge_iitk/onj/backend/submissions/".$name.".".$extension." ".$extension;
+			system("sudo /opt/lampp/htdocs/online_judge_iitk/onj/backend/upload/compiler ".$filename." /opt/lampp/htdocs/online_judge_iitk/onj/backend/submissions/".$name.".".$extension." ".$extension);
+
+
+			//Check if executable is formed.
+			if (!file_exists("/var/chroot/".$filename))
+				{
+					echo "compilation error";
+					//updating to database that submission has compilation error
+					$sql = "UPDATE `files_submitted` SET `status`='120' WHERE `id`='$id'";
+					mysql_query($sql);
+					continue;
+				}
+		}
+
+		//updating to database that program is succesfully compiled and is currently running
+		$sql = "UPDATE `files_submitted` SET `status`='1110' WHERE `id`='$id'";
+		mysql_query($sql);
 
 		//Get number of input files to test the submission on
 		if (!($query1 = mysql_query("SELECT `num_input_file`, `time_limit`, `mem_limit` FROM `problems` WHERE `problem_id`='$prob_id'")))
-			echo "Unable to fetch prob data";
+			echo "Unable to fetch problem data";
 
 		$prob_data = mysql_fetch_array($query1);
 			
@@ -130,7 +155,7 @@ while ($j<10)
 	    	system ("sudo /var/chroot/judge ".$filename." /opt/lampp/htdocs/online_judge_iitk/onj/backend/problems/".$prob_id."/".$in.".in ".$extension." ".$prob_data['time_limit']." ".$prob_data['mem_limit']." out.txt");
 			echo "<br>sudo /var/chroot/judge ".$filename." /opt/lampp/htdocs/online_judge_iitk/onj/backend/problems/".$prob_id."/".$in.".in ".$extension." ".$prob_data['time_limit']." ".$prob_data['mem_limit']." out.txt<br>";	    	
 
-	    	exec ("rm /var/chroot/".$filename);
+	    	// exec ("rm /var/chroot/".$filename);
 
 	    	//truncate the file
 			$trunc = fopen("/var/chroot/check", "w");

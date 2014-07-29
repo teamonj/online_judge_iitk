@@ -296,6 +296,13 @@ class Admin extends CI_Controller {
 			system("sudo chmod 777 -R ".$dir);
 		}
 
+		public function rejudge(){
+			$prob_id = $this->uri->segment(3);
+
+			$query = $this->db->query("UPDATE `files_submitted` SET `status`='0' WHERE `prob_id`='".$prob_id."'");
+			// redirect(base_url()."admin/edit_problem");
+		}
+
 	public function edit_contest(){
 		$data['title']="Admin Page";
         $data['active']="";

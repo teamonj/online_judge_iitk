@@ -26,7 +26,7 @@ int main(int argc, char ** argv)
 	fclose(fp);
 
 	gettimeofday(&start, NULL);
-	printf("argv[0]='%s' argv[1]='%s' argv[2]='%s'\n",argv[0],argv[1], argv[2]);
+	// printf("argv[0]='%s' argv[1]='%s' argv[2]='%s'\n",argv[0],argv[1], argv[2]);
 	child_pid = fork();
 	if(child_pid ==0)
 	{
@@ -66,13 +66,17 @@ int main(int argc, char ** argv)
 			setrlimit(RLIMIT_NPROC,&forklim);
 			execl("/usr/bin/python2.7","dummy","zombie.py",argv[1],(char *)0);
 		} else if (!strcmp(argv[3],"java")) {
-			lim.rlim_cur+=29963000;//accomodating space for libraries 
+			lim.rlim_cur+=999929963000;//accomodating space for libraries 
 			lim.rlim_max=lim.rlim_cur;
 			setrlimit(RLIMIT_AS,&lim);
 			forklim.rlim_cur=0;
 			forklim.rlim_max=0;
 			setrlimit(RLIMIT_NPROC,&forklim);
-			execl("java","dummy",argv[1],(char *)0);
+			FILE * ffp = fopen("aj.txt","w");
+			fprintf(ffp,"Hello argv[0]='%s' argv[1]='%s' argv[2]='%s'\n",argv[0],argv[1], argv[2]);
+			fclose(ffp);
+			execl("java Main","java Main",(char *)NULL);
+			// execl("java","Main",(char *)NULL);
 		} else {
 			lim.rlim_cur+=4329900;//accomodating space for libraries 
 			lim.rlim_max=lim.rlim_cur;

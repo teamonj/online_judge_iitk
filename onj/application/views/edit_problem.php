@@ -9,6 +9,7 @@
 				    <th>Problem ID</th>
 				    <th>Contest Name</th>
 				    <th>Contest ID</th>
+				    <th>Rejudge</th>
 			  </tr></thead>
 			  <tbody>
 			<?php 
@@ -28,6 +29,11 @@
 					echo "<td>".$query->result()[$i]->problem_id."</td>";
 					echo "<td>".$query->result()[$i]->contest_name."</td>";
 					echo "<td>".$query->result()[$i]->contest_id."</td>";
+					echo '<td> <div class="ui red icon button" onclick="rejudge_problem(';
+					echo "'".base_url()."','";
+					echo $query->result()[$i]->problem_id;
+					echo "'";
+					echo '); "><i class = "refresh icon"> </i></div>';
 					echo "</tr>";	
 				}
 			

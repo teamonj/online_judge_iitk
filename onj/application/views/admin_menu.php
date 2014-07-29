@@ -35,15 +35,7 @@
 							</div>
 						</div>
 
-						<div class = "item">
-							<i class = "edit large <?php if ($menu_option_selected == 'edit_file') echo "active red"; ?> icon"></i>
-							<div class = "content">
-								<a class = "ui small header <?php if ($menu_option_selected == 'edit_file') echo "red"; ?>" onclick = "open_admin_menu('edit_file','<?php echo base_url(); ?>');">
-									 Edit Input/Output File
-								</a>
-							</div>
-						</div>
-
+						
 						<div class = "item">
 							<i class = "edit sign large <?php if ($menu_option_selected == 'edit_contest') echo "active red"; ?> icon"></i>
 							<div class = "content">

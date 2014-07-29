@@ -191,6 +191,7 @@ $this->load->model('problems_model');
           
             $this->load->view('header',$practice_data);
             $this->load->view('body_nav',$practice_data);
+            $this->load->view('login');
             $this->load->view('problem_head',$practice_data);
             $this->load->view('problem_desc',$practice_data);
             if($this->session->userdata('is_logged_in')==1)

@@ -210,6 +210,16 @@ function submit_edit_file(form_name)
 	$('#'+form_name).submit();
 }
 
+function rejudge_problem(base_url,prob_id)
+{
+	// alert("Shits");
+	if(confirm("Are you sure you want to rejudge problem"+prob_id+"!"))
+	{
+		var win = window.open(base_url+"admin/rejudge/"+prob_id,'_self');
+		win.focus();
+	}
+}
+
 //Control Panel
 
 function confirm_remove(base_url,prob_id)
